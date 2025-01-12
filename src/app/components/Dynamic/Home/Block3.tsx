@@ -26,7 +26,7 @@ const Block3 = async () => {
       <h3
           className={`${archivo.className} text-gray-900 font-bold mb-5 text-3xl text-center`}
         >
-          Bread {""}
+          Banana Bread {""}
           <span className="bg-orange-500 rounded text-white pb-0.5 px-2">
             Recipes
           </span>

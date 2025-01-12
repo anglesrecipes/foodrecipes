@@ -69,8 +69,8 @@ const Navbar = () => {
           <div className="flex justify-between items-center">
             <div className="flex justify-center items-center gap-16">
               <Logo />
-              <Menu />
             </div>
+            <Menu />
             <div>
               <CallToAction />
             </div>

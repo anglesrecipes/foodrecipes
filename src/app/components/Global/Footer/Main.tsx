@@ -98,7 +98,7 @@ const Main = () => {
           </section>
         </div>
         <div className="border-t border-slate-200 my-2.5 pt-6 text-center mt-5">
-          © 2024{" "}
+          © 2025{" "}
           <Link href="/" className="font-semibold">
             FoudRecipes
           </Link>
