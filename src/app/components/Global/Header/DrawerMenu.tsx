@@ -22,27 +22,27 @@ const DrawerMenu = () => {
               Chicken
             </Link>
           </li>
-          <li className="text-gray-900 uppercase text-xl font-bold">
+          {/* <li className="text-gray-900 uppercase text-xl font-bold">
             <Link href="/tasty" className="animated-underline">
               Tasty
             </Link>
-          </li>
+          </li> */}
           <li className="text-gray-900 uppercase text-xl font-bold">
             <Link href="/banana-bread" className="animated-underline">
               Banana Bread
             </Link>
           </li>
-          <li className="text-gray-900 uppercase text-xl font-bold">
+          {/* <li className="text-gray-900 uppercase text-xl font-bold">
             <Link href="/cookies" className="animated-underline">
               Cookies
             </Link>
-          </li>
+          </li> */}
           <li className="text-gray-900 uppercase text-xl font-bold">
             <Link href="/shrimp" className="animated-underline">
             Shrimp
             </Link>
           </li>
-          <li className="text-gray-900 uppercase text-xl font-bold">
+          {/* <li className="text-gray-900 uppercase text-xl font-bold">
             <Link href="/about" className="animated-underline">
               About me
             </Link>
@@ -51,7 +51,7 @@ const DrawerMenu = () => {
             <Link href="/contact" className="animated-underline">
               Contact Us
             </Link>
-          </li>
+          </li> */}
         </ul>
       </div>
       <div>
