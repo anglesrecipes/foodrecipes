@@ -43,6 +43,7 @@ interface PostsQueryResult {
 const ChickenRecipes = gql`
   query GetPosts {
     posts(
+      first: 10
       where: {
         orderby: { field: DATE, order: DESC }
         categoryName: "Chicken"
@@ -96,6 +97,7 @@ export async function chiecken_recipes_articles(): Promise<Post[]> {
 const BananaBread = gql`
   query GetPosts {
     posts(
+      first: 10
       where: {
         orderby: { field: DATE, order: DESC }
         categoryName: "Banana Bread"
@@ -150,6 +152,7 @@ export async function bread_recipes_articles(): Promise<Post[]> {
 const Cookies = gql`
   query GetPosts {
     posts(
+      first: 10
       where: {
         orderby: { field: DATE, order: DESC }
         categoryName: "Cookies"
@@ -202,6 +205,7 @@ export async function cookies_recipes_articles(): Promise<Post[]> {
 const Shrimp = gql`
   query GetPosts {
     posts(
+      first: 10
       where: {
         orderby: { field: DATE, order: DESC }
         categoryName: "Shrimp"
@@ -254,6 +258,7 @@ export async function cake_recipes_articles(): Promise<Post[]> {
 const FeaturedArticles = gql`
   query GetPosts {
     posts(
+      first: 10
       where: { status: PUBLISH }
     ) {
       nodes {
