@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.animated-underline {
+  position: relative;
+}
+.animated-underline::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 3px;
+  bottom: 0;
+  left: 0;
+  @apply bg-orange-500;
+  transition: width 0.3s ease-in-out;
+}
+.animated-underline:hover::after {
+  width: 100%;
+}
+
+.post_content p{
+  @apply mb-8;
+}
+.post_content h1, h2, h3, h4, h5, h6{
+  @apply mb-2;
+  @apply text-[25px];
+  @apply font-semibold;
+  @apply text-gray-900;
+}
+.post_content ul, ol {
+  @apply mb-8;
+}
+
+.post_content iframe{
+  @apply mb-8;
+  width: 100%;
+}
+
+.post_content a {
+  text-decoration: underline;
+  @apply decoration-amber-500;
+  transition: 0.3s;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+.post_content a:hover {
+  @apply bg-amber-300;
+}
+
+.post_content{
+  list-style-type: none;
+  @apply pl-0;
+}
+.post_content li{
+  @apply mb-3;
+  font-size: 15px;
+}
+.post_content li:before{
+  content: "";
+  display: block;
+  float: left;
+  height: 7px;
+  width: 7px;
+  border-radius: 0px;
+  margin-top: 8px;
+  @apply bg-orange-600;
+  font-size: 1.2em;
+  margin-right: 6px;
+}
+
+.post_content img{
+  @apply mb-8;
+}
+
+.post_content table {
+  @apply w-full;
+  @apply border-collapse;
+  @apply mb-6;
+}
+
+.post_content table th, 
+.post_content table td {
+  @apply border;
+  @apply border-gray-300;
+  @apply p-4;
+  @apply text-left;
+  @apply text-sm;
+  @apply text-gray-900;
+}
+
+.post_content table th {
+  @apply bg-gray-100;
+  @apply font-semibold;
+  @apply text-gray-700;
+}
+
+.post_content table tr:nth-child(even) {
+  @apply bg-gray-50;
+}
+
+.post_content table tr:hover {
+  @apply bg-gray-100;
+}
+
+.post_content blockquote {
+  @apply border-l-4;
+  @apply border-slate-400;
+  @apply pl-4;
+  @apply py-2;
+  @apply italic;
+  @apply text-gray-700;
+  @apply my-6;
+  @apply mt-0;
+  @apply mb-7;
+  @apply bg-gray-100;
+  @apply inline-flex;
+  @apply items-center;
+}
+
+.post_content blockquote p {
+  @apply text-lg;
+  @apply leading-relaxed;
+  @apply inline;
+  @apply not-italic;
+  @apply mb-0;
+}
+
+.schema-faq {
+  @apply !mb-5;
+}
+.schema-faq-section{
+  @apply bg-slate-200;
+  @apply p-3;
+  @apply mb-2;
+}
+.schema-faq-section strong {
+  @apply mb-1;
+}
+.schema-faq-section p{
+  @apply mb-0;
+}
+
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f3f4f6;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 100px;
+  border: 2px solid #f3f4f6;
+}
+
+/* Add this to your global CSS file */
+.scrollbar-thin {
+  scrollbar-width: thin; /* Firefox */
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px; /* Chrome, Safari and Opera */
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #4b5563; /* Slate-500 */
+  border-radius: 100px; /* Rounded corners */
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent; /* Track background */
+}
