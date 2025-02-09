@@ -18,16 +18,16 @@ type CategoryType = {
   description: string;
 };
 
-type PostType = {
-  id: number;
-  slug: string;
-  title: {
-    rendered: string;
-  };
-  excerpt: {
-    rendered: string;
-  };
-};
+// type PostType = {
+//   id: number;
+//   slug: string;
+//   title: {
+//     rendered: string;
+//   };
+//   excerpt: {
+//     rendered: string;
+//   };
+// };
 
 // type ContentType = {
 //   type: "category" | "post" | "page";
