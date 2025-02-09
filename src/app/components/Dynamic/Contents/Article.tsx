@@ -8,7 +8,6 @@ import SideNewsletter from "@/app/components/Dynamic/Sidebar/Newsletter";
 import CopyLinkButton from "./CopyLinkButton";
 import { FaFacebookF, FaTwitter } from "react-icons/fa";
 import { BsPinterest } from "react-icons/bs";
-import { useState } from "react";
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -91,7 +90,7 @@ const generateTableOfContents = (content: string) => {
     return { toc: [], modifiedContent: content };
   }
 
-  const headingRegex = /<h([2])[^>]*>(.*?)<\/h[2]>/g;
+  const headingRegex = /<h([2-6])[^>]*>(.*?)<\/h\1>/g;
   const toc: { text: string; id: string; level: number }[] = [];
   const modifiedContent = content.replace(
     headingRegex,
@@ -105,6 +104,7 @@ const generateTableOfContents = (content: string) => {
 
   return { toc, modifiedContent };
 };
+
 
 export default function Post({ post }: PostProps) {
   if (!post) {
@@ -329,55 +329,3 @@ const Sidebar = () => (
     <RecentPosts />
   </aside>
 );
-
-interface Comment {
-  id: number;
-  author_name: string;
-  content: string;
-  date: string;
-}
-
-const CommentSection = ({ postId }: { postId: number }) => {
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [name, setName] = useState("");
-  const [content, setContent] = useState("");
-
-  const fetchComments = async () => {
-    try {
-      const response = await fetch(
-        `https://www.foudrecipes.com/wp-json/wp/v2/comments?post=${postId}`
-      );
-      const data = await response.json();
-      setComments(data);
-    } catch (error) {
-      console.error("Error fetching comments:", error);
-    }
-  };
-
-  const submitComment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(
-        `https://www.foudrecipes.com/wp-json/wp/v2/comments`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            post: postId,
-            author_name: name,
-            content: content,
-          }),
-        }
-      );
-      if (response.ok) {
-        setName("");
-        setContent("");
-        fetchComments(); // Refresh comments after submission
-      }
-    } catch (error) {
-      console.error("Error submitting comment:", error);
-    }
-  };
-};

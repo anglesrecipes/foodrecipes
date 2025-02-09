@@ -29,21 +29,21 @@ type PostType = {
   };
 };
 
-type ContentType = {
-  type: "category" | "post" | "page";
-  id?: number;
-  slug?: string;
-  name?: string;
-  title?: {
-    rendered: string;
-  };
-  description?: string;
-  excerpt?: {
-    rendered: string;
-  };
-  initialPosts?: PostType[];
-  totalPages?: number;
-};
+// type ContentType = {
+//   type: "category" | "post" | "page";
+//   id?: number;
+//   slug?: string;
+//   name?: string;
+//   title?: {
+//     rendered: string;
+//   };
+//   description?: string;
+//   excerpt?: {
+//     rendered: string;
+//   };
+//   initialPosts?: PostType[];
+//   totalPages?: number;
+// };
 
 async function fetchCategoryData(slug: string) {
   try {

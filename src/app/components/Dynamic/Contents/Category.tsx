@@ -1,4 +1,4 @@
-// ./src/app/components/Dynamic/Contents/Category.tsx
+// Category.tsx
 import React from "react";
 import { GoChevronRight } from "react-icons/go";
 import { Archivo } from "next/font/google";
@@ -7,6 +7,7 @@ import RecentPosts from "@/app/components/Dynamic/Sidebar/RecentPosts";
 import About from "@/app/components/Dynamic/Sidebar/About";
 import SideNewsletter from "@/app/components/Dynamic/Sidebar/Newsletter";
 import CategoryPosts from "./CategoryPosts";
+import { Post } from "@/types"; // Import the Post type
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -16,17 +17,21 @@ const archivo = Archivo({
 
 interface CategoryProps {
   category: {
-    categoryImage: any;
+    categoryImage: string;
     id: number;
     name: string;
     description: string;
     slug: string;
   };
-  initialPosts: any[];
+  initialPosts: Post[]; // Use the Post type here
   totalPages: number;
 }
 
-export default function Category({ category, initialPosts, totalPages }: CategoryProps) {
+export default function Category({
+  category,
+  initialPosts,
+  totalPages,
+}: CategoryProps) {
   return (
     <main>
       <header className="bg-white pt-5 py-2.5">
@@ -55,7 +60,7 @@ export default function Category({ category, initialPosts, totalPages }: Categor
           </ol>
         </nav>
       </header>
-      
+
       <section className="py-10 pb-0 bg-white relative">
         <div className="relative h-full">
           <div
@@ -93,7 +98,7 @@ export default function Category({ category, initialPosts, totalPages }: Categor
               totalPages={totalPages}
             />
           </section>
-          
+
           <aside className="lg:w-3/12">
             <About />
             <SideNewsletter />

@@ -1,11 +1,11 @@
-// ./src/app/components/Dynamic/Contents/CategoryPosts.tsx
-'use client';
+// CategoryPosts.tsx
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { RxDividerVertical } from "react-icons/rx";
-import { Post } from '@/types'; // You'll need to create this type
+import { Post } from "@/types"; // Import the Post type
 
 interface CategoryPostsProps {
   initialPosts: Post[];
@@ -16,7 +16,7 @@ interface CategoryPostsProps {
 const truncateContent = (content: string, maxLength: number) => {
   const strippedContent = content.replace(/<[^>]*>/g, "");
   const normalizedContent = strippedContent.replace(/\s+/g, " ").trim();
-  
+
   if (normalizedContent.length > maxLength) {
     return normalizedContent.substring(0, maxLength).trim() + "...";
   }
@@ -32,7 +32,11 @@ const formatDate = (dateString: string) => {
   });
 };
 
-export default function CategoryPosts({ initialPosts, categoryId, totalPages }: CategoryPostsProps) {
+export default function CategoryPosts({
+  initialPosts,
+  categoryId,
+  totalPages,
+}: CategoryPostsProps) {
   const [posts, setPosts] = useState<Post[]>(initialPosts);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +51,7 @@ export default function CategoryPosts({ initialPosts, categoryId, totalPages }: 
       const response = await fetch(
         `https://dev-foudrecipes.pantheonsite.io/wp-json/wp/v2/posts?categories=${categoryId}&per_page=10&page=${nextPage}&_embed`
       );
-      const newPosts = await response.json();
+      const newPosts: Post[] = await response.json();
       setPosts((prevPosts) => [...prevPosts, ...newPosts]);
       setCurrentPage(nextPage);
     } catch (error) {
@@ -74,10 +78,12 @@ export default function CategoryPosts({ initialPosts, categoryId, totalPages }: 
                   post._embedded["wp:featuredmedia"]?.[0]?.source_url ||
                   `https://dev-foudrecipes.pantheonsite.io/wp-content/uploads/2024/10/loading.webp`
                 }
-                alt={post._embedded["wp:featuredmedia"]?.[0]?.alt_text || post.title.rendered}
+                alt={
+                  post._embedded["wp:featuredmedia"]?.[0]?.alt_text ||
+                  post.title.rendered
+                }
                 width={400}
                 height={280}
-                objectFit="cover"
                 className="w-full h-auto"
               />
             </Link>
@@ -93,10 +99,7 @@ export default function CategoryPosts({ initialPosts, categoryId, totalPages }: 
                 <span>
                   <RxDividerVertical className="text-slate-300" />
                 </span>
-                <time
-                  dateTime={post.date}
-                  className="text-slate-500 text-sm"
-                >
+                <time dateTime={post.date} className="text-slate-500 text-sm">
                   {formatDate(post.date)}
                 </time>
               </div>
@@ -121,9 +124,29 @@ export default function CategoryPosts({ initialPosts, categoryId, totalPages }: 
           <button
             onClick={loadMorePosts}
             disabled={isLoading}
-            className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-800 hover:bg-amber-400"
+            className="mx-1 px-6 py-2 rounded-lg bg-gray-800 text-white hover:bg-amber-500 disabled:bg-gray-300 disabled:text-gray-500 transition-all duration-300 ease-in-out shadow-lg"
           >
-            {isLoading ? "Loading..." : "Load More"}
+            {isLoading ? (
+              <span className="flex items-center">
+                <svg
+                  className="animate-spin h-5 w-5 mr-2 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6V3a9 9 0 019-9h0a9 9 0 019 9v3"
+                  />
+                </svg>
+                Loading...
+              </span>
+            ) : (
+              "Load More"
+            )}
           </button>
         </div>
       )}
