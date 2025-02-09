@@ -1,3 +1,4 @@
+// ./src/apis/graphql/content.ts
 import { gql } from "@apollo/client";
 import client from "@/apis/apollo/apollo-client";
 
@@ -36,105 +37,114 @@ export async function getAllSlugs() {
   ];
 }
 
-export async function getContentBySlug(slug: string) {
-  const { data } = await client.query({
-    query: gql`
-      query GetContentBySlug($slug: ID!) {
-        category(id: $slug, idType: SLUG) {
-          id
-          name
-          slug
-          categoryImage
-          description
-          posts(first: 100, where: { orderby: { field: DATE, order: DESC } }) {
-            nodes {
-              title
-              slug
-              content
-              date
-              seo {
-                readingTime
-              }
-              featuredImage {
-                node {
-                  sourceUrl
-                  altText
+export async function getContentBySlug(slug: string, first = 10, after = null) {
+  try {
+    const { data } = await client.query({
+      query: gql`
+        query GetContentBySlug($slug: ID!, $first: Int, $after: String) {
+          category(id: $slug, idType: SLUG) {
+            id
+            name
+            slug
+            categoryImage
+            description
+            posts(first: $first, after: $after, where: { orderby: { field: DATE, order: DESC } }) {
+              nodes {
+                title
+                slug
+                content
+                date
+                seo {
+                  readingTime
+                }
+                featuredImage {
+                  node {
+                    sourceUrl
+                    altText
+                  }
                 }
               }
+              pageInfo {
+                endCursor
+                hasNextPage
+              }
             }
-          }
-          children {
-            nodes {
-              name
-              slug
-              description
-              posts {
-                nodes {
-                  title
-                  date
-                  slug
-                  content
-                  featuredImage {
-                    node {
-                      sourceUrl
-                      altText
+            children {
+              nodes {
+                name
+                slug
+                description
+                posts {
+                  nodes {
+                    title
+                    date
+                    slug
+                    content
+                    featuredImage {
+                      node {
+                        sourceUrl
+                        altText
+                      }
                     }
                   }
                 }
               }
             }
           }
-        }
 
-        page(id: $slug, idType: URI) {
-          id
-          title
-          content
-          slug
-        }
+          page(id: $slug, idType: URI) {
+            id
+            title
+            content
+            slug
+          }
 
-        post(id: $slug, idType: SLUG) {
-          id
-          title
-          content
-          slug
-          author {
-            node {
-              name
-              avatar {
-                url
+          post(id: $slug, idType: SLUG) {
+            id
+            title
+            content
+            slug
+            author {
+              node {
+                name
+                avatar {
+                  url
+                }
+              }
+            }
+            featuredImage {
+              node {
+                sourceUrl
+                altText
+                title
+              }
+            }
+            seo {
+              metaDesc
+              title
+              opengraphPublishedTime
+              opengraphModifiedTime
+              readingTime
+            }
+            categories {
+              nodes {
+                name
+                slug
               }
             }
           }
-          featuredImage {
-            node {
-              sourceUrl
-              altText
-              title
-            }
-          }
-          seo {
-            metaDesc
-            title
-            opengraphPublishedTime
-            opengraphModifiedTime
-            readingTime
-          }
-          categories {
-            nodes {
-              name
-              slug
-            }
-          }
         }
-      }
-    `,
-    variables: { slug },
-  });
+      `,
+      variables: { slug, first, after },
+    });
 
-  if (data.category) return { ...data.category, type: "category" };
-  if (data.page) return { ...data.page, type: "page" };
-  if (data.post) return { ...data.post, type: "post" };
+    if (data.category) return { ...data.category, type: "category" };
+    if (data.page) return { ...data.page, type: "page" };
+    if (data.post) return { ...data.post, type: "post" };
 
-  return null;
+    return null;
+  } catch (error) {
+    console.error("Error fetching content by slug:", error);
+    return null;
+  }
 }

@@ -1,6 +1,5 @@
 import React from "react";
 import { notFound } from "next/navigation";
-import { getContentBySlug, getAllSlugs } from "@/apis/graphql/content";
 import { Metadata } from "next";
 import Article from "@/app/components/Dynamic/Contents/Article";
 import Page from "@/app/components/Dynamic/Contents/Page";
@@ -8,32 +7,75 @@ import Category from "@/app/components/Dynamic/Contents/Category";
 
 type Props = {
   params: { slug: string[] };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
 
-// Define a type for Post
-interface Post {
-  title: string;
-  slug: string;
+async function fetchCategoryData(slug: string) {
+  try {
+    const res = await fetch(`https://dev-foudrecipes.pantheonsite.io/wp-json/wp/v2/categories?slug=${slug}`);
+    const categories = await res.json();
+    return categories.length > 0 ? categories[0] : null;
+  } catch (error) {
+    console.error('Error fetching category:', error);
+    return null;
+  }
+}
+
+async function fetchCategoryPosts(categoryId: number) {
+  try {
+    const res = await fetch(
+      `https://dev-foudrecipes.pantheonsite.io/wp-json/wp/v2/posts?categories=${categoryId}&_embed`
+    );
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching category posts:', error);
+    return [];
+  }
+}
+
+async function fetchPostData(slug: string) {
+  try {
+    const res = await fetch(
+      `https://dev-foudrecipes.pantheonsite.io/wp-json/wp/v2/posts?slug=${slug}&_embed`
+    );
+    const posts = await res.json();
+    return posts.length > 0 ? posts[0] : null;
+  } catch (error) {
+    console.error('Error fetching post:', error);
+    return null;
+  }
 }
 
 async function fetchContent(slug: string[]) {
-  let content = await getContentBySlug(slug.join("/"));
-  if (!content) {
-    const parentSlug = slug[0];
-    const parentContent = await getContentBySlug(parentSlug);
-    if (parentContent?.type === "category") {
-      const childSlug = slug.slice(1).join("/");
-      content = await getContentBySlug(childSlug);
-      if (content) {
-        content = { ...content, parentSlug, isSubCategory: true };
-      }
-    }
+  const slugString = slug.join("/");
+  
+  // First try to fetch as category
+  const category = await fetchCategoryData(slugString);
+  if (category) {
+    const posts = await fetchCategoryPosts(category.id);
+    return {
+      ...category,
+      type: "category",
+      initialPosts: posts,
+      totalPages: Math.ceil(category.count / 10)
+    };
   }
-  return content;
+
+  // If not a category, try to fetch as post
+  const post = await fetchPostData(slugString);
+  if (post) {
+    return {
+      ...post,
+      type: "post"
+    };
+  }
+
+  return null;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const content = await fetchContent(params.slug);
+  
   if (!content) {
     return {
       title: "Not Found",
@@ -41,183 +83,55 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const description =
-    content.description ||
-    (content.content ? content.content.substring(0, 160) : "");
-
   const canonicalUrl = `https://www.foudrecipes.com/${params.slug.join("/")}`;
+  const title = content.type === "category" ? content.name : content.title?.rendered || content.title;
+  const description = content.description || content.excerpt?.rendered || "";
 
-  switch (content.type) {
-    case "category":
-      return {
-        title: content.name,
-        description,
-        alternates: {
-          canonical: canonicalUrl,
-        },
-        robots: {
-          index: true,
-          follow: true,
-          googleBot: {
-            index: true,
-            follow: true,
-            "max-video-preview": -1,
-            "max-image-preview": "large",
-            "max-snippet": -1,
-          },
-        },
-      };
-    case "page":
-      return {
-        title: content.title,
-        description: content.seo?.metaDesc || description,
-        robots: {
-          index: true,
-          follow: true,
-          googleBot: {
-            index: true,
-            follow: true,
-            "max-video-preview": -1,
-            "max-image-preview": "large",
-            "max-snippet": -1,
-          },
-        },
-        alternates: {
-          canonical: canonicalUrl,
-        },
-      };
-    case "post":
-      return {
-        title: content.title,
-        description: content.seo?.metaDesc || description,
-        openGraph: {
-          title: content.seo?.title || content.title,
-          description: content.seo?.metaDesc || description,
-          type: "article",
-          publishedTime: content.seo?.opengraphPublishedTime,
-          modifiedTime: content.seo?.opengraphModifiedTime,
-          authors: [content.author?.node?.name],
-          images: [
-            {
-              url: content.featuredImage?.node?.sourceUrl || "",
-              alt: content.featuredImage?.node?.altText || "",
-            },
-          ],
-        },
-        twitter: {
-          card: "summary_large_image",
-          title: content.seo?.title || content.title,
-          description: content.seo?.metaDesc || description,
-          images: [content.featuredImage?.node?.sourceUrl || ""],
-        },
-        robots: {
-          index: true,
-          follow: true,
-          googleBot: {
-            index: true,
-            follow: true,
-            "max-video-preview": -1,
-            "max-image-preview": "large",
-            "max-snippet": -1,
-          },
-        },
-        alternates: {
-          canonical: canonicalUrl,
-        },
-      };
-    default:
-      return {
-        title: "Content",
-        description: "Dynamic content page",
-        alternates: {
-          canonical: canonicalUrl,
-        },
-      };
-  }
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+  };
 }
 
 export default async function DynamicPage({ params }: Props) {
   const content = await fetchContent(params.slug);
-  if (!content) notFound();
 
-  // Schema Markup
-  let schemaMarkup = {};
-
-  switch (content.type) {
-    case "post":
-      schemaMarkup = {
-        "@context": "https://schema.org",
-        "@type": "Article",
-        headline: content.title,
-        description: content.seo?.metaDesc || content.description,
-        image: content.featuredImage?.node?.sourceUrl || "",
-        author: {
-          "@type": "Person",
-          name: content.author?.node?.name,
-        },
-        datePublished: content.seo?.opengraphPublishedTime,
-        dateModified: content.seo?.opengraphModifiedTime,
-      };
-      break;
-    case "page":
-      schemaMarkup = {
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        name: content.title,
-        description: content.description,
-      };
-      break;
-    case "category":
-    case "subCategory":
-      schemaMarkup = {
-        "@context": "https://schema.org",
-        "@type": "ItemList",
-        name: content.name,
-        itemListElement: Array.isArray(content.posts)
-          ? content.posts.map((post: Post, index: number) => ({
-              "@type": "ListItem",
-              position: index + 1,
-              item: {
-                "@type": "BlogPosting",
-                name: post.title,
-                url: `/${post.slug}`,
-              },
-            }))
-          : [],
-      };
-      break;
-    default:
-      schemaMarkup = {
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        name: "Dynamic Content Page",
-      };
-      break;
+  if (!content) {
+    notFound();
   }
 
-  // Stringify the schema markup
-  const jsonLd = JSON.stringify(schemaMarkup);
-
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: jsonLd }}
-      />
-      {content.type === "category" ? (
-        <Category category={content} />
-      ) : content.type === "page" ? (
-        <Page page={content} />
-      ) : content.type === "post" ? (
-        <Article post={content} />
-      ) : (
-        notFound()
-      )}
-    </>
-  );
+  switch (content.type) {
+    case "category":
+      return (
+        <Category
+          category={content}
+          initialPosts={content.initialPosts}
+          totalPages={content.totalPages}
+        />
+      );
+    case "page":
+      return <Page page={content} />;
+    case "post":
+      return <Article post={content} />;
+    default:
+      notFound();
+  }
 }
 
 export async function generateStaticParams() {
-  const slugs = await getAllSlugs();
-  return slugs.map((slug) => ({ slug: slug.split("/") }));
+  try {
+    const res = await fetch(
+      "https://dev-foudrecipes.pantheonsite.io/wp-json/wp/v2/categories?per_page=100"
+    );
+    const categories = await res.json();
+    return categories.map((category: any) => ({
+      slug: [category.slug],
+    }));
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return [];
+  }
 }
