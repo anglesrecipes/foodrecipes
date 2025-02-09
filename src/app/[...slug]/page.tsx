@@ -10,6 +10,41 @@ type Props = {
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
+type CategoryType = {
+  id: number;
+  slug: string;
+  name: string;
+  count: number;
+  description: string;
+};
+
+type PostType = {
+  id: number;
+  slug: string;
+  title: {
+    rendered: string;
+  };
+  excerpt: {
+    rendered: string;
+  };
+};
+
+type ContentType = {
+  type: "category" | "post" | "page";
+  id?: number;
+  slug?: string;
+  name?: string;
+  title?: {
+    rendered: string;
+  };
+  description?: string;
+  excerpt?: {
+    rendered: string;
+  };
+  initialPosts?: PostType[];
+  totalPages?: number;
+};
+
 async function fetchCategoryData(slug: string) {
   try {
     const res = await fetch(`https://dev-foudrecipes.pantheonsite.io/wp-json/wp/v2/categories?slug=${slug}`);
@@ -126,8 +161,8 @@ export async function generateStaticParams() {
     const res = await fetch(
       "https://dev-foudrecipes.pantheonsite.io/wp-json/wp/v2/categories?per_page=100"
     );
-    const categories = await res.json();
-    return categories.map((category: any) => ({
+    const categories: CategoryType[] = await res.json();
+    return categories.map((category) => ({
       slug: [category.slug],
     }));
   } catch (error) {
