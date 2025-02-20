@@ -38,11 +38,6 @@ const Navbar = () => {
                 icon: <FaPinterest />,
                 label: "Pinterest",
               },
-              {
-                href: "https://www.tiktok.com/@foud.recipes",
-                icon: <FaTiktok />,
-                label: "TikTok",
-              },
             ].map(({ href, icon, label }, index) => (
               <li key={index} className="">
                 <Link

@@ -46,7 +46,7 @@ export async function getContentBySlug(slug: string, first = 10, after = null) {
             id
             name
             slug
-            categoryImage
+            category_image
             description
             posts(first: $first, after: $after, where: { orderby: { field: DATE, order: DESC } }) {
               nodes {
@@ -73,6 +73,7 @@ export async function getContentBySlug(slug: string, first = 10, after = null) {
               nodes {
                 name
                 slug
+                category_image
                 description
                 posts {
                   nodes {
@@ -130,6 +131,7 @@ export async function getContentBySlug(slug: string, first = 10, after = null) {
               nodes {
                 name
                 slug
+                category_image
               }
             }
           }

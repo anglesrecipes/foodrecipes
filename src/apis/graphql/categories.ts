@@ -25,7 +25,7 @@ interface CategoriesQueryResult {
 
 const GET_CATEGORIES = gql`
   query GetTopLevelCategories {
-    categories(where: { parent: null }) {
+    categories {
       nodes {
         id
         name

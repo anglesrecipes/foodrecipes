@@ -13,6 +13,7 @@ type Props = {
 type CategoryType = {
   id: number;
   slug: string;
+  category_image: string;
   name: string;
   count: number;
   description: string;

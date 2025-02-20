@@ -22,6 +22,8 @@ export interface Post {
     nodes: {
       name: string;
       slug: string;
+      id: string;
+      categoryImage: string;
     }[];
   };
   featuredImage: {

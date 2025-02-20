@@ -198,18 +198,20 @@ const MainContent = ({
 }) => (
   <article className="lg:w-7/12 border-0 lg:border-x-2 border-slate-100 px-0 lg:px-8">
     <header>
-      <nav aria-label="Breadcrumb" className="-mb-3">
+    <nav aria-label="Breadcrumb" className="-mb-3">
         <ol className="flex justify-start items-center gap-2">
           <li className="text-gray-900 text-[13px] font-semibold">
             <Link href="/">Home</Link>
           </li>
           <li className="inline-block text-slate-500 text-sm">/</li>
-          {category ? (
-            <li className="text-gray-900 text-[13px] font-semibold">
-              <Link href={`/${category.slug}`}>{category.name}</Link>
-            </li>
-          ) : null}
-          <li className="inline-block text-slate-500 text-sm">/</li>
+          {category && (
+            <>
+              <li className="text-gray-900 text-[13px] font-semibold">
+                <Link href={`/category/${category.slug}`}>{category.name}</Link>
+              </li>
+              <li className="inline-block text-slate-500 text-sm">/</li>
+            </>
+          )}
           <li
             className="text-gray-900 text-[13px] font-semibold"
             aria-current="page"
@@ -223,9 +225,9 @@ const MainContent = ({
       >
         {post.title.rendered}
       </h1>
-      <p className="text-slate-500 text-md my-5">{post.excerpt.rendered}</p>
+      <p className="text-slate-500 text-md my-5" dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
       {author && (
-        <div className="flex justify-start items-center gap-3 mb-8">
+        <div className="flex justify-start items-center gap-3 mb-8 mt-5">
           <div
             className="h-11 w-11 bg-slate-200 rounded-full bg-cover bg-center"
             style={{ backgroundImage: `url(${author.avatar_urls["48"]})` }}

@@ -17,7 +17,7 @@ const archivo = Archivo({
 
 interface CategoryProps {
   category: {
-    categoryImage: string;
+    category_image: string;
     id: number;
     name: string;
     description: string;
@@ -65,7 +65,7 @@ export default function Category({
         <div className="relative h-full">
           <div
             className="p-16 bg-cover bg-center h-full"
-            style={{ backgroundImage: `url(${category.categoryImage})` }}
+            style={{ backgroundImage: `url(${category.category_image})` }}
           >
             <div className="max-w-[90%] sm:max-w-[95%] md:max-w-[1000px] lg:max-w-[1000px] xl:max-w-[1250px] mx-auto md:px-6">
               <h1
